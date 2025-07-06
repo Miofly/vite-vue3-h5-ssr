@@ -1,14 +1,14 @@
 {
   "buildCommand": "pnpm run build",
   "functions": {
-    "api/server.prod.ts": {
+    "server.js": {
       "maxDuration": 30
     }
   },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/server.prod.ts"
+      "destination": "/server.js"
     }
   ]
 }
