@@ -1,6 +1,5 @@
 {
   "name": "vite-vue3-h5-ssr",
-  "type": "module",
   "version": "3.0.0",
   "packageManager": "pnpm@10.12.4",
   "author": "lincenying <lincenying@qq.com>",
