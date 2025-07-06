@@ -1,6 +1,7 @@
-import type { RenderType } from '@/types'
+import type { Request, Response } from 'express'
 import fs from 'node:fs'
-import { resolve } from 'node:path'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { UTC2Date } from '@lincy/utils'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
@@ -10,11 +11,22 @@ import logger from 'morgan'
 import requestIp from 'request-ip'
 import serveStatic from 'serve-static'
 
+// 定义 RenderType 接口，避免外部依赖
+interface RenderType {
+    html: string
+    preloadLinks: string
+    headTags: string
+}
+
 // 创建 Express 应用
 async function createServer() {
+    // 在 Vercel Functions 环境中正确解析路径
+    const __dirname = path.dirname(fileURLToPath(import.meta.url))
+    const resolve = (p: string) => path.resolve(__dirname, p)
+
     // 读取模板和清单文件
-    const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
-    const manifest = JSON.parse(fs.readFileSync(resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
+    const template = fs.readFileSync(resolve('../dist/client/index.html'), 'utf-8')
+    const manifest = JSON.parse(fs.readFileSync(resolve('../dist/client/.vite/ssr-manifest.json'), 'utf-8'))
     const app = express()
 
     logger.token('remote-addr', (req) => {
@@ -71,13 +83,13 @@ async function createServer() {
     // 解析 cookies 中间件
     app.use(cookieParser())
 
-    // 主要路由处理 - 使用通配符匹配所有路径
-    app.use('*', async (req, res) => {
+    // 主要路由处理 - 使用 app.all('*') 替代 app.use('*') 以避免 path-to-regexp 问题
+    app.all('*', async (req, res) => {
         try {
             const url = req.originalUrl
 
             // 导入服务端渲染函数
-            const entryServerPath = resolve('dist/server/entry-server.js')
+            const entryServerPath = resolve('../dist/server/entry-server.js')
             const render = (await import(entryServerPath)).render
 
             const { html: appHtml, preloadLinks, headTags } = await render(url, manifest, req) as RenderType
@@ -100,8 +112,8 @@ async function createServer() {
     return { app }
 }
 
-// Vercel Functions 导出
-export default async function handler(req: any, res: any) {
+// Vercel Functions 导出 - 使用 Express 类型
+export default async function handler(req: Request, res: Response) {
     try {
         const { app } = await createServer()
         return app(req, res)
