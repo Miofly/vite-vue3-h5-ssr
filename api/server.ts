@@ -20,13 +20,8 @@ interface RenderType {
 
 // 创建 Express 应用
 async function createServer() {
-    // 在 Vercel Functions 环境中正确解析路径
-    const __dirname = path.dirname(fileURLToPath(import.meta.url))
-    const resolve = (p: string) => path.resolve(__dirname, p)
-
-    // 读取模板和清单文件
-    const template = fs.readFileSync(resolve('../dist/client/index.html'), 'utf-8')
-    const manifest = JSON.parse(fs.readFileSync(resolve('../dist/client/.vite/ssr-manifest.json'), 'utf-8'))
+    const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
+    const manifest = JSON.parse(fs.readFileSync(resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
     const app = express()
 
     logger.token('remote-addr', (req) => {
@@ -71,7 +66,7 @@ async function createServer() {
 
     // Node.js 静态资源中间件
     app.use(
-        serveStatic(resolve('../dist/client'), {
+        serveStatic(resolve('dist/client'), {
             index: false,
         }),
     )
@@ -89,7 +84,7 @@ async function createServer() {
             const url = req.originalUrl
 
             // 导入服务端渲染函数
-            const entryServerPath = resolve('../dist/server/entry-server.js')
+            const entryServerPath = resolve('dist/server/entry-server.js')
             const render = (await import(entryServerPath)).render
 
             const { html: appHtml, preloadLinks, headTags } = await render(url, manifest, req) as RenderType
