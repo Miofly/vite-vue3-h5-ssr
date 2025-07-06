@@ -83,7 +83,8 @@ export default async function handler(req: any, res: any) {
                 .replace('<!--app-html-->', appHtml)
                 .replace('<!--head-tags-->', headTags)
 
-            res.status(200).end(html)
+            // res.status(200).end(html)
+            res.status(200).send(`3333`)
         }
         catch (e: unknown) {
             const err = e as Error
@@ -91,6 +92,4 @@ export default async function handler(req: any, res: any) {
             res.status(500).end(err.stack)
         }
     })
-
-    res.status(200).send(`11188888888`)
 }
