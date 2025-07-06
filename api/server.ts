@@ -13,10 +13,8 @@ import requestIp from 'request-ip'
 import serveStatic from 'serve-static'
 
 export default async function handler(req: any, res: any) {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url))
-    const resolve = (p: string) => path.resolve(__dirname, p)
-    const template = fs.readFileSync(resolve('../client/index.html'), 'utf-8')
-    const manifest = JSON.parse(fs.readFileSync(resolve('../client/.vite/ssr-manifest.json'), 'utf-8'))
+    const template = fs.readFileSync('./dist/client/index.html', 'utf-8')
+    const manifest = JSON.parse(fs.readFileSync('./dist/client/.vite/ssr-manifest.json', 'utf-8'))
     const app = express()
 
     logger.token('remote-addr', (req) => {
