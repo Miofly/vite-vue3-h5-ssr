@@ -77,7 +77,7 @@ export default async function handler(req: any, res: any) {
                 const url = req.originalUrl
 
                 // 导入服务端渲染函数
-                const render = (await import('../dist/server/entry-server.js')).render
+                const render = (await import('dist/server/entry-server.js')).render
 
                 const { html: appHtml, preloadLinks, headTags } = await render(url, manifest, req) as RenderType
 
