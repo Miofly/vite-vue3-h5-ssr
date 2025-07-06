@@ -71,8 +71,8 @@ export default async function handler(req: any, res: any) {
         // 解析 cookies 中间件
         app.use(cookieParser())
 
-        // 主要路由处理
-        app.use('*', async (req, res) => {
+        // 主要路由处理 - 使用 app.all 处理所有 HTTP 方法
+        app.all('*', async (req, res) => {
             try {
                 const url = req.originalUrl
 
