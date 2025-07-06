@@ -1,7 +1,8 @@
 import type { RenderType } from '@/types'
 import fs from 'node:fs'
+import path from 'node:path'
 
-import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { UTC2Date } from '@lincy/utils'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
@@ -12,8 +13,8 @@ import requestIp from 'request-ip'
 import serveStatic from 'serve-static'
 
 export default async function handler(req: any, res: any) {
-    const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
-    const manifest = JSON.parse(fs.readFileSync(resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
+    const template = fs.readFileSync('dist/client/index.html', 'utf-8')
+    const manifest = JSON.parse(fs.readFileSync('dist/client/.vite/ssr-manifest.json', 'utf-8'))
     const app = express()
 
     logger.token('remote-addr', (req) => {
