@@ -78,7 +78,7 @@ async function createServer() {
     app.use(cookieParser())
 
     // 主要路由处理 - 使用 app.all('*') 替代 app.use('*') 以避免 path-to-regexp 问题
-    app.all('*', async (req, res) => {
+    app.all(/(.*)/, async (req, res) => {
         try {
             const url = req.originalUrl
 
