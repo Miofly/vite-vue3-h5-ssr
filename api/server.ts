@@ -7,7 +7,8 @@ export default async function handler(req: any, res: any) {
         const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
 
         // 设置正确的 Content-Type 并返回 HTML
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(template)
+        res.setHeader('Content-Type', 'text/html')
+        res.status(200).end(template)
     }
     catch (error) {
         console.error('Error reading template:', error)
