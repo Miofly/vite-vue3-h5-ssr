@@ -1,10 +1,5 @@
 {
   "buildCommand": "pnpm run build",
-  "functions": {
-    "api/server.js": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",
