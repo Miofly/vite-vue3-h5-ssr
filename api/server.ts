@@ -68,8 +68,6 @@ export default async function handler(req: any, res: any) {
     // 解析 cookies 中间件
     app.use(cookieParser())
 
-    res.status(200).send(`88888888`)
-
     app.use('/{*default}', async (req, res) => {
         try {
             // const url = req.originalUrl.replace('/test/', '/')
@@ -93,4 +91,6 @@ export default async function handler(req: any, res: any) {
             res.status(500).end(err.stack)
         }
     })
+
+    res.status(200).send(`11188888888`)
 }
