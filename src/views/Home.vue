@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h5>Topics page</h5>
+        <h5 class="title">Topics page</h5>
         <ul class="flex flex-col">
             <li v-for="(item, index) in lists.data" :key="index">
                 <router-link :to="`/topic?id=${item.c_id}`">
@@ -115,3 +115,10 @@ onMounted(() => {
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.title {
+    font-size: 20px;
+    color: red;
+}
+</style>
