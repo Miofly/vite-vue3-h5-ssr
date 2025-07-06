@@ -1,15 +1,13 @@
 import type { RenderType } from '@/types'
 import fs from 'node:fs'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export default async function handler(req: any, res: any) {
     try {
         // 检查是否是静态资源请求
         const url = req.url || req.originalUrl || '/'
-        const isStaticAsset = /\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|webp|avif)$/i.test(url)
-
-        if (isStaticAsset) {
-            // 静态资源请求，返回 404 让 Vercel 处理
+        if (/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|map|webp|avif)$/i.test(url)) {
             res.status(404).end('Not Found')
             return
         }
@@ -21,12 +19,13 @@ export default async function handler(req: any, res: any) {
             return
         }
 
-        // 读取模板和清单文件
-        const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
-        const manifest = JSON.parse(fs.readFileSync(resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
-
-        // 导入服务端渲染函数
-        const render = (await import('dist/server/entry-server.js')).render
+        // 关键：获取当前目录，拼接绝对路径
+        const __filename = fileURLToPath(import.meta.url)
+        const __dirname = dirname(__filename)
+        const template = fs.readFileSync(resolve(__dirname, '../dist/client/index.html'), 'utf-8')
+        const manifest = JSON.parse(fs.readFileSync(resolve(__dirname, '../dist/client/.vite/ssr-manifest.json'), 'utf-8'))
+        const entryServerPath = resolve(__dirname, '../dist/server/entry-server.js')
+        const render = (await import(entryServerPath)).render
 
         // 执行服务端渲染
         const { html: appHtml, preloadLinks, headTags } = await render(url, manifest, req) as RenderType
