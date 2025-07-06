@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express'
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { UTC2Date } from '@lincy/utils'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
@@ -20,8 +19,8 @@ interface RenderType {
 
 // 创建 Express 应用
 async function createServer() {
-    const template = fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
-    const manifest = JSON.parse(fs.readFileSync(resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
+    const template = fs.readFileSync(path.resolve('dist/client/index.html'), 'utf-8')
+    const manifest = JSON.parse(fs.readFileSync(path.resolve('dist/client/.vite/ssr-manifest.json'), 'utf-8'))
     const app = express()
 
     logger.token('remote-addr', (req) => {
@@ -66,7 +65,7 @@ async function createServer() {
 
     // Node.js 静态资源中间件
     app.use(
-        serveStatic(resolve('dist/client'), {
+        serveStatic(path.resolve('dist/client'), {
             index: false,
         }),
     )
@@ -84,7 +83,7 @@ async function createServer() {
             const url = req.originalUrl
 
             // 导入服务端渲染函数
-            const entryServerPath = resolve('dist/server/entry-server.js')
+            const entryServerPath = path.resolve('dist/server/entry-server.js')
             const render = (await import(entryServerPath)).render
 
             const { html: appHtml, preloadLinks, headTags } = await render(url, manifest, req) as RenderType
